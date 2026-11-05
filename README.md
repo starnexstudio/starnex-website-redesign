@@ -28,13 +28,14 @@ The pages at the root, `en/`, `de/`, `services/`, `blog/`, `sitemap.xml`, `robot
 
 ## Publishing
 
-`node _build/publish.mjs` collects only the public files into `dist/`. A host should serve `dist/`, never the repository root, because `_build` and `_docs` are not public.
+`node _build/publish.mjs` collects only the public files into `dist/`. The host must serve `dist/`, never the repository root, because `_build` and `_docs` are not public.
+
+GitHub Pages publishes it through `.github/workflows/deploy.yml` on every push to `main`, with the repository's Pages source set to GitHub Actions.
 
 | Setting | Value |
 | --- | --- |
-| Build command | `node _build/build.mjs && node _build/check-seo.mjs && node _build/publish.mjs` |
-| Publish folder | `dist` |
-| `STARNEX_ENV` | `preview` on a preview host, which marks every page noindex. Unset on production. |
+| `STARNEX_ENV` | `preview` marks every page noindex. Unset on production. |
+| `STARNEX_BASE` | The path a preview is served under. Unset on production. |
 
 See `.env.example`. Do not put secrets in this repository; none are needed.
 

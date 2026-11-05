@@ -1,0 +1,45 @@
+# Builds the site and publishes dist/ to GitHub Pages on every push to main.
+#
+# PREVIEW SETTINGS: these two lines make the site a noindex preview under the repository's path.
+# Remove both when starnexstudio.com moves to this repository. See _docs/CUTOVER.md.
+name: Deploy
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+env:
+  STARNEX_ENV: preview
+  STARNEX_BASE: /starnex-website-redesign
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build strictly (a missing translation stops it)
+        run: node _build/build.mjs
+      - name: Check SEO and launch files
+        run: node _build/check-seo.mjs
+      - name: Collect the public files
+        run: node _build/publish.mjs
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
