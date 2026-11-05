@@ -47,7 +47,7 @@ export default {
     titleB: 'bashkë',
     text: 'Na tregoni për biznesin tuaj dhe çfarë ju nevojitet. Do t’ju përgjigjemi me hapat e ardhshëm.',
     button: 'Le të flasim',
-    call: 'Ose na telefononi në {phone}',
+    call: 'Ose na telefononi në WhatsApp: {phone}',
   },
   consent: {
     label: 'Zgjedhja për analitikën',

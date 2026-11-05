@@ -47,7 +47,7 @@ export default {
     titleB: 'Ihr Projekt',
     text: 'Erzählen Sie uns von Ihrem Unternehmen und davon, was Sie brauchen. Wir melden uns mit den nächsten Schritten.',
     button: 'Projekt anfragen',
-    call: 'Oder rufen Sie uns an: {phone}',
+    call: 'Oder rufen Sie uns über WhatsApp an: {phone}',
   },
   consent: {
     label: 'Auswahl zur Analyse',

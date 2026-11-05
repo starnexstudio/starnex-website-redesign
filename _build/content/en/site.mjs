@@ -47,7 +47,7 @@ export default {
     titleB: 'yours',
     text: 'Tell us about your business and what you need. We’ll reply with next steps.',
     button: 'Let’s Talk',
-    call: 'Or call us on {phone}',
+    call: 'Or call us on WhatsApp: {phone}',
   },
   consent: {
     label: 'Analytics choice',

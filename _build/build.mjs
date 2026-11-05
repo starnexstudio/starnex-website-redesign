@@ -81,7 +81,7 @@ function parts(loc) {
   const t = translator(loc, content[loc.code], { strict: !DEV, onMissing: (c, k) => missingKeys.add(`${c}: ${k}`) });
   const L = p => pathFor(loc, p); // link to a page in this language
   const svcT = slug => t.entry('services', slug) || { name: `⟦missing:${loc.code}:services.${slug}⟧`, split: ['⟦missing⟧', ''] };
-  const CALL = `<p class="call">${t('cta.call', { phone: `<a href="${contact.tel}">${esc(contact.phone)}</a>` })}</p>`;
+  const CALL = `<p class="call">${t('cta.call', { phone: `<a href="${contact.whatsapp}" target="_blank" rel="noopener">${esc(contact.phone)}</a>` })}</p>`;
 
   const heroBtns = (href2, label2) => `<div class="xbtns">${xb('primary', '#contact', t('hero.contact'))}${xb('ghost', href2, label2)}</div>`;
   const menuBtn = `<button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="overlay"><span class="lbl" aria-hidden="true"><span>${esc(t('header.menuOpen'))}</span><span>${esc(t('header.menuClose'))}</span></span><span class="ring" aria-hidden="true"><i></i><i></i></span><span class="vh">${esc(t('header.menuToggle'))}</span></button>`;
