@@ -163,3 +163,8 @@
 /* phones: the text runs the full width; no hover, so scrolling carries the colour and the CSS fade must not lag behind it */
 @media (max-width:760px){.svc p{max-width:none}}
 @media (max-width:760px),(hover:none){.svc h2,.svc .go{transition:none}}
+
+/* the services page: scrolling drives the colour, so no CSS fade on it; hover still wins */
+.svc h2{transition:none}
+.svc .go{transition:gap 400ms var(--ease)}
+@media (hover:hover){a.svc:hover h2,a.svc:hover .go{color:var(--crimson)!important}}

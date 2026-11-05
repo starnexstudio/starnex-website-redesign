@@ -44,14 +44,18 @@ if (window.gsap && window.ScrollTrigger && !RM) {
     gsap.from(el, { y: 40, opacity: 0, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 85%' } }));
   gsap.utils.toArray('.inc').forEach((el, i) =>
     gsap.from(el, { y: 40, opacity: 0, duration: .9, ease: 'power3.out', delay: (i % 3) * .08, scrollTrigger: { trigger: el, start: 'top 90%' } }));
-  if (innerWidth <= 760 || matchMedia('(hover:none)').matches) gsap.utils.toArray('.svc').forEach(el => {
-    const parts = el.querySelectorAll('h2,.go');
-    gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 25%', scrub: true } })
+  // service rows: titles slide in from their side, drift with the scroll, and the colour passes through as they cross the screen
+  gsap.utils.toArray('.svc').forEach(row => {
+    const flip = row.classList.contains('flip'), small = innerWidth <= 760, h = row.querySelector('h2');
+    const reveal = { trigger: row, start: 'top 88%', toggleActions: 'play none none reverse' };
+    gsap.from(h, { xPercent: flip ? 12 : -12, opacity: 0, duration: .8, ease: 'power3.out', scrollTrigger: reveal });
+    gsap.from(row.querySelector('p'), { y: 20, opacity: 0, duration: .7, delay: .08, ease: 'power3.out', scrollTrigger: reveal });
+    gsap.fromTo(h, { x: small && flip ? 14 : 0 }, { x: small ? (flip ? 0 : 14) : (flip ? -30 : 30), ease: 'none', scrollTrigger: { trigger: row, start: 'top bottom', end: 'bottom top', scrub: true } });
+    const parts = row.querySelectorAll('h2,.go');
+    gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 80%', end: 'bottom 25%', scrub: true } })
       .fromTo(parts, { color: '#fff' }, { color: '#E0002B', ease: 'none' })
       .to(parts, { color: '#fff', ease: 'none' });
-    gsap.fromTo(el.querySelector('h2'), { x: el.classList.contains('flip') ? 14 : 0 }, { x: el.classList.contains('flip') ? 0 : 14, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
   });
-  gsap.utils.toArray('.svc').forEach(el => gsap.from(el.children, { y: 30, opacity: 0, duration: 1, stagger: .12, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 85%' } }));
   gsap.utils.toArray('.prow').forEach(el => gsap.from(el, { y: 22, opacity: 0, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 94%' } }));
   gsap.from('.tag', { y: 20, opacity: 0, duration: .7, stagger: .05, ease: 'power3.out', scrollTrigger: { trigger: '.tags', start: 'top 85%' } });
   gsap.utils.toArray('.qa details').forEach((el, i) =>
@@ -275,7 +279,7 @@ const ease = t => 1 - Math.pow(1 - t, 3);
 let lastK = -1;
 function loop(now) {
   requestAnimationFrame(loop); if (!vis) return;
-  const intro = RM ? 1 : ease(clamp((now - t0 - 200) / 2600));
+  const intro = RM ? 1 : ease(clamp((now - t0) / 1300));
   const sp = RM ? 0 : clamp(scrollY / Math.max(1, hero.offsetHeight));
   const k = intro * (1 - sp * .85);
   if (Math.abs(k - lastK) > .0005) {
@@ -290,5 +294,5 @@ function loop(now) {
 }
 requestAnimationFrame(loop);
 };
-if (!LOW && window.THREE) { const go = () => ('requestIdleCallback' in window ? requestIdleCallback(startHero, { timeout: 1200 }) : setTimeout(startHero, 200)); document.readyState === 'complete' ? go() : addEventListener('load', go, { once: true }); }
+if (!LOW && window.THREE) { const go = () => ('requestIdleCallback' in window ? requestIdleCallback(startHero, { timeout: 500 }) : setTimeout(startHero, 200)); document.readyState === 'complete' ? go() : addEventListener('load', go, { once: true }); }
 })();
