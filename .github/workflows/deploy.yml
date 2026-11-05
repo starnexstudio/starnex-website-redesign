@@ -1,7 +1,5 @@
 # Builds the site and publishes dist/ to GitHub Pages on every push to main.
-#
-# PREVIEW SETTINGS: these two lines make the site a noindex preview under the repository's path.
-# Remove both when starnexstudio.com moves to this repository. See _docs/CUTOVER.md.
+# Production: STARNEX_ENV and STARNEX_BASE stay unset. See README.md.
 name: Deploy
 on:
   push:
@@ -14,9 +12,6 @@ permissions:
 concurrency:
   group: pages
   cancel-in-progress: true
-env:
-  STARNEX_ENV: preview
-  STARNEX_BASE: /starnex-website-redesign
 jobs:
   build:
     runs-on: ubuntu-latest
