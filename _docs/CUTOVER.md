@@ -37,7 +37,7 @@ Expect a few minutes of downtime between steps 3 and 4, and possibly longer befo
 
 The old site has only `/` and `/en/` in its sitemap, and both are kept. `/images/og-image.jpg`, `/site.webmanifest`, `/robots.txt` and `/sitemap.xml` also keep their paths. See the URL inventory in `LAUNCH.md`. No redirects are needed, and nothing is redirected to the homepage in bulk. `/en` to `/en/` is automatic and was confirmed on the preview.
 
-Unverified: Search Console was not available, so other indexed URLs may exist. Check its Pages report before the switch.
+Checked in Search Console on 2026-11-05: only `/` and `/en/` are indexed, and the performance report shows no other page with traffic apart from `www` and a `#contact` variant of the homepage. There are no removals, manual actions or security issues. Four URLs are listed as "Page with redirect"; the list itself did not load, so those four were not identified.
 
 ## Backup
 
