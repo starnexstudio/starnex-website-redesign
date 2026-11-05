@@ -28,7 +28,7 @@ for (const [vp, w, h, mob] of [['desktop', 1440, 900, false], ['phone', 360, 780
       if (sx > 1) out.push(`page scrolls sideways by ${sx}px`);
       const sel = 'h1, h2, h3, .xbtn, .lang a, .fchip, .tag, .chips li, .crumb, .next .t, .pread, .cv-w, .wmeta b, .menu-btn .lbl, .step h3, .inc h3';
       for (const el of document.querySelectorAll(sel)) {
-        const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || el.closest('.overlay,[hidden],.cover')) continue;
+        const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || el.closest('.overlay,[hidden],.cover,.dx-steps.live .dx-track')) continue; // the staircase on service pages runs off-screen until it is scrolled
         const b = el.getBoundingClientRect(); if (!b.width) continue;
         const txt = (el.innerText || '').trim().replace(/\s+/g, ' ').slice(0, 40);
         if (el.scrollWidth > el.clientWidth + 2 && cs.overflowX !== 'visible') out.push(`clipped: ${el.tagName.toLowerCase()}.${el.className} "${txt}"`);

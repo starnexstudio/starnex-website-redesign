@@ -193,7 +193,7 @@ ${main.map(([k, href, key], i) => `    <a href="${href}"${k === cur ? ' aria-cur
 </div>`;
   };
 
-  function layout(pg, { title, desc, cur = '', svc = '', main, three = false, extraHead = '', extraScripts = '' }) {
+  function layout(pg, { title, desc, cur = '', svc = '', main, three = false, extraHead = '', extraScripts = '', extraCss = '', bodyClass = '' }) {
     // "Let's Talk" scrolls to this page's contact section, or opens the homepage's one if there is none
     const toContact = main.includes('id="contact"') ? '#contact' : L('') + '#contact';
     const logoImg = (w, h) => `<a class="logo" href="${L('')}" aria-label="${esc(t('header.homeAria'))}"><img src="/assets/logo.svg" alt="StarNex Studio" width="${w}" height="${h}"></a>`;
@@ -211,8 +211,8 @@ ${head(pg, { title, desc, extra: extraHead })}
 <link rel="stylesheet" href="/css/pages.css">
 <link rel="stylesheet" href="/css/xbtn.css">
 <link rel="stylesheet" href="/css/menu.css">
-</head>
-<body>
+${extraCss ? `<link rel="stylesheet" href="${extraCss}">\n` : ''}</head>
+<body${bodyClass ? ` class="${bodyClass}"` : ''}>
 <header class="hdr" id="hdr">
   ${logoImg(113, 32)}
   <div class="right">
@@ -314,18 +314,50 @@ ${work}
 </section>
 
 ` : '';
-    const main = `${P.hero({ shape: s.shape, id: 'svc-title', crumb: `<a href="${L('services.html')}">${esc(t('nav.services'))}</a><i class="sep"></i><span>${pad(i + 1)} / ${pad(services.length)}</span>`, h1: c.split, lead: c.lead, btn2: ['#included', t('service.included')], explore: '#intro' })}
+    const ticks = services.map((o, k) => `<a href="${L(`services/${o.slug}.html`)}" data-n="${esc(svcT(o.slug).name)}" aria-label="${esc(svcT(o.slug).name)}"${k === i ? ' aria-current="page"' : ''}></a>`).join('');
+    const main = `<canvas id="svcGL" data-shape="${s.shape}" aria-hidden="true"></canvas>
+<section class="dx-hero wrap" id="top" aria-labelledby="svc-title" style="--len:${Math.max(...c.split.map(x => x.trim().length))}">
+  <h1 id="svc-title"><span class="a">${esc(c.split[0])}</span><span class="o">${esc(c.split[1])}</span></h1>
+  <div class="dx-bar">
+    <p class="lead">${esc(c.lead)}</p>
+    ${P.heroBtns('#included', t('service.included'))}
+    <nav class="dx-rail" aria-label="${esc(t('nav.services'))}">
+      <span class="lbl"><a href="${L('services.html')}">${esc(t('nav.services'))}</a><i></i><span>${pad(i + 1)} / ${pad(services.length)}</span></span>
+      <span class="ticks">${ticks}</span>
+    </nav>
+  </div>
+</section>
 
 <section class="statement wrap" id="intro" aria-label="${esc(t('service.approach'))}">
   <span class="label">${esc(t('service.approach'))}</span>
   <p>${esc(c.statement)}</p>
 </section>
 
-${P.grid('included', esc(t('service.includedTitle')), c.incIntro, c.included)}
+<section class="dx-stage" id="included" aria-labelledby="included-title">
+  <div class="dx-pin wrap">
+    <div class="dx-list">
+      <div class="dx-head"><h2 id="included-title">${esc(t('service.includedTitle'))}</h2><p>${esc(c.incIntro)}</p></div>
+      <ol class="dx-items">
+${c.included.map(([x, d], k) => `        <li class="dx-item"><span class="n">${pad(k + 1)}</span><div><h3>${esc(x)}</h3><div class="d"><p>${esc(d)}</p></div></div></li>`).join('\n')}
+      </ol>
+    </div>
+    <p class="dx-count" aria-hidden="true"><b>01</b> / ${pad(c.included.length)}</p>
+  </div>
+</section>
 
-${P.fit(t('service.fitTitle'), c.fit)}
+<section class="dx-fit wrap" aria-labelledby="fit-title">
+  <h2 id="fit-title">${esc(t('service.fitTitle'))}</h2>
+  <ul>${c.fit.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+</section>
 
-${P.steps(t('service.stepsTitleA'), t('service.stepsTitleB'), t('service.stepsIntro'), c.steps)}
+<section class="dx-steps" aria-labelledby="steps-title">
+  <div class="dx-spin">
+    <div class="dx-shead wrap"><h2 id="steps-title">${esc(t('service.stepsTitleA'))}<span class="o">${esc(t('service.stepsTitleB'))}</span></h2><p>${esc(t('service.stepsIntro'))}</p></div>
+    <ol class="dx-track wrap">
+${c.steps.map(([x, d], k) => `      <li class="dx-step"><span class="num">${pad(k + 1)}</span><h3>${esc(x)}</h3><p>${esc(d)}</p></li>`).join('\n')}
+    </ol>
+  </div>
+</section>
 
 ${workSection}${P.faq(c.faqTitle, t('service.faqIntro'), c.faq)}
 
@@ -333,7 +365,7 @@ ${P.nextLink(L(`services/${next.slug}.html`), t('service.next'), svcT(next.slug)
 
 ${P.cta()}`;
     const ld = P.graph(P.crumbs(pg, [[t('nav.services'), L('services.html')], [c.name, L(pg.id)]]), { '@type': 'Service', '@id': SITE + L(pg.id) + '#service', name: c.name, description: c.lead, url: SITE + L(pg.id), inLanguage: loc.htmlLang, provider: { '@id': ORG_ID }, areaServed: { '@type': 'Country', name: 'Albania' } });
-    return P.layout(pg, { title: t('meta.pageTitle', { page: c.seoTitle }), desc: c.lead, cur: 'services', svc: s.slug, main, three: true, extraHead: ld });
+    return P.layout(pg, { title: t('meta.pageTitle', { page: c.seoTitle }), desc: c.lead, cur: 'services', svc: s.slug, main, three: true, extraHead: ld, extraCss: '/css/service-page.css', bodyClass: 'dx' });
   },
 
 services(loc, P, pg) {

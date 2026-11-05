@@ -1,0 +1,152 @@
+/* StarNex Studio: service detail pages. The symbol stays on a fixed canvas and travels down the page with the visitor. */
+.dx #svcGL{position:fixed;inset:0;width:100%;height:100lvh;z-index:0;pointer-events:none}
+.dx main>section,.dx main>a,.dx .foot{position:relative;z-index:1}
+
+/* ---------- opening: the title splits across the screen, the symbol sits between its lines ---------- */
+.dx-hero{min-height:max(100svh,640px);display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding-top:clamp(92px,12vh,124px);padding-bottom:clamp(20px,3.5vh,36px);overflow:clip}
+.dx-hero h1{font-size:min(calc((100vw - 2*var(--pad))/(var(--len)*.56)),27svh,240px);font-weight:500;letter-spacing:-.05em;line-height:.94;display:flex;flex-direction:column}
+.dx-hero h1 .a{align-self:flex-start}
+.dx-hero h1 .o{align-self:flex-end;color:transparent;-webkit-text-stroke:1.5px #fff;font-weight:400;padding-right:.03em}
+.dx-bar{display:grid;grid-template-columns:minmax(0,1.15fr) auto minmax(0,.85fr);align-items:end;gap:28px clamp(28px,4vw,64px);padding-top:20px;border-top:1px solid var(--line)}
+.dx-bar .lead{font-size:clamp(15px,1.25vw,18px);line-height:1.5;color:rgba(255,255,255,.85);max-width:46ch}
+.dx-bar .xbtns{flex-wrap:nowrap}
+
+/* every service as a slanted tick: a way through all nine, with this one in red */
+.dx-rail{display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-width:0}
+.dx-rail .lbl{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mute);letter-spacing:.06em;text-transform:uppercase}
+.dx-rail .lbl a:hover{color:#fff}
+.dx-rail .lbl i{width:14px;height:1px;background:rgba(255,255,255,.3)}
+.ticks{display:flex;gap:2px}
+.ticks a{position:relative;display:block;width:18px;height:28px}
+.ticks a::before{content:"";position:absolute;inset:0 7px;background:rgba(255,255,255,.28);transform:skewX(-20deg);transition:background 250ms,inset 300ms var(--ease)}
+.ticks a:hover::before,.ticks a:focus-visible::before{background:#fff;inset:0 5px}
+.ticks a[aria-current]::before{background:var(--crimson);inset:0 5px}
+.ticks a::after{content:attr(data-n);position:absolute;right:0;bottom:calc(100% + 6px);padding:3px 8px;background:#000;color:#fff;font-size:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 200ms}
+.ticks a:hover::after,.ticks a:focus-visible::after{opacity:1}
+@media (hover:none){ .ticks a::after{display:none} }
+
+/* ---------- approach: the symbol has come apart behind the words ---------- */
+.dx .statement{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3.2fr);gap:24px clamp(24px,4vw,64px);align-items:start;padding-block:clamp(110px,20vh,220px);border-top:0}
+.dx .statement .label{margin:0;padding-top:.8em}
+.dx .statement p{font-size:clamp(30px,calc(10px + 3.5vw),68px);max-width:none}
+
+/* ---------- what's included: pinned, one item at a time, and the symbol fills with red ---------- */
+.dx-stage{border-top:1px solid var(--line)}
+.dx-pin{padding-block:clamp(56px,8vw,110px)}
+.dx-head{display:flex;flex-direction:column;gap:12px;margin-bottom:clamp(24px,3.4vh,40px)}
+.dx-head h2{font-size:clamp(34px,calc(12px + 2.6vw),56px);font-weight:500;letter-spacing:-.04em;line-height:1}
+.dx-head p{color:rgba(255,255,255,.72);max-width:46ch}
+.dx-items{list-style:none;margin:0;padding:0}
+.dx-item{display:grid;grid-template-columns:44px minmax(0,1fr);padding-block:clamp(14px,1.9vh,20px);border-top:1px solid var(--line)}
+.dx-item:last-child{border-bottom:1px solid var(--line)}
+.dx-item .n{padding-top:.7em;font-size:12px;color:var(--mute);letter-spacing:.08em;transition:color 400ms}
+.dx-item h3{font-size:clamp(22px,min(2.5vw,4.4vh),40px);font-weight:500;letter-spacing:-.03em;line-height:1.12;transition:color 450ms var(--ease),transform 600ms var(--ease)}
+.dx-item .d{display:grid;grid-template-rows:1fr;transition:grid-template-rows 550ms var(--ease),opacity 450ms}
+.dx-item .d>p{overflow:hidden;min-height:0;color:rgba(255,255,255,.76);line-height:1.55;max-width:50ch}
+.dx-item .d>p::before{content:"";display:block;height:8px}
+.dx-item.on .n{color:var(--crimson)}
+.dx-count{display:none}
+/* the pinned version, only with room and motion for it */
+.dx-stage.live{height:calc(100vh + 6*60vh)}
+.dx-stage.live .dx-pin{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-content:center;gap:0 clamp(24px,4vw,64px);padding-block:76px 24px}
+.dx-stage.live .dx-count{display:block;grid-column:2;grid-row:1;align-self:end;justify-self:end;font-size:clamp(14px,1.1vw,16px);color:var(--mute);letter-spacing:.1em;font-variant-numeric:tabular-nums}
+.dx-stage.live .dx-count b{color:#fff;font-weight:600}
+.dx-stage.live .dx-list{grid-column:1}
+.dx-stage.live .dx-item{cursor:pointer}
+.dx-stage.live .dx-item h3{color:rgba(255,255,255,.3)}
+.dx-stage.live .dx-item:hover h3{color:rgba(255,255,255,.6)}
+.dx-stage.live .dx-item.on h3{color:#fff;transform:translateX(10px)}
+.dx-stage.live .dx-item .d{grid-template-rows:0fr;opacity:0;transform:translateX(10px)}
+.dx-stage.live .dx-item.on .d{grid-template-rows:1fr;opacity:1}
+
+/* ---------- a good fit for: one running sentence cut by the logo's slash ---------- */
+.dx-fit{padding-block:clamp(90px,15vh,170px);border-top:1px solid var(--line)}
+.dx-fit h2{margin-bottom:clamp(24px,3vw,44px);font-size:12px;font-weight:500;color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
+.dx-fit ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:.08em 0;font-size:clamp(30px,calc(10px + 3.9vw),78px);font-weight:500;letter-spacing:-.04em;line-height:1.14}
+.dx-fit li:not(:last-child)::after{content:"";display:inline-block;width:.09em;height:.72em;margin:0 .3em;background:var(--crimson);transform:skewX(-20deg)}
+
+/* ---------- how it works: a rising staircase, walked sideways ---------- */
+.dx-steps{border-top:1px solid var(--line)}
+.dx-spin{padding-block:clamp(64px,8vw,110px)}
+.dx-shead{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px 48px;margin-bottom:clamp(36px,5vh,60px)}
+.dx-shead h2{font-size:clamp(40px,calc(14px + 4.4vw),84px);font-weight:500;letter-spacing:-.04em;line-height:1}
+.dx-shead h2 .o{color:transparent;-webkit-text-stroke:1.5px #fff;font-weight:400}
+.dx-shead p{color:rgba(255,255,255,.75);max-width:38ch}
+.dx-track{list-style:none;margin:0;padding-block:0;display:grid}
+.dx-step{position:relative;display:grid;grid-template-columns:clamp(62px,9vw,120px) minmax(0,1fr);gap:4px clamp(10px,3vw,28px);padding-block:26px}
+.dx-step::before,.dx-step::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--line)}
+.dx-step::after{height:2px;background:var(--crimson);transform:scaleX(var(--sp,0));transform-origin:0 0;transition:transform 900ms var(--ease)}
+.dx-steps:not(.live) .dx-step.on::after{--sp:1}
+.dx-step .num{grid-row:span 2;font-size:clamp(46px,5vw,84px);font-weight:500;letter-spacing:-.05em;line-height:.9;color:transparent;-webkit-text-stroke:1.2px rgba(255,255,255,.5);transition:color 500ms var(--ease),-webkit-text-stroke-color 500ms}
+.dx-step.on .num{color:var(--crimson);-webkit-text-stroke-color:var(--crimson)}
+.dx-step h3{font-size:clamp(22px,2vw,30px);font-weight:500;letter-spacing:-.02em;line-height:1.15}
+.dx-step p{color:rgba(255,255,255,.72);line-height:1.6;max-width:44ch}
+.dx-steps.live .dx-spin{position:sticky;top:0;height:100vh;overflow:clip;display:flex;flex-direction:column;justify-content:center;padding-block:76px 24px}
+.dx-steps.live .dx-track{display:flex;gap:clamp(28px,4vw,64px);width:max-content;will-change:transform}
+.dx-steps.live .dx-step{display:flex;flex-direction:column;gap:12px;width:clamp(300px,30vw,440px);flex:none}
+.dx-steps.live .dx-step:nth-child(1){margin-top:17vh}
+.dx-steps.live .dx-step:nth-child(2){margin-top:11vh}
+.dx-steps.live .dx-step:nth-child(3){margin-top:5.5vh}
+.dx-steps.live .dx-step::after{transition:none}
+
+/* ---------- from our work: uneven, off the grid ---------- */
+.dx .related{padding-block:clamp(70px,10vw,140px)}
+.dx .rgrid,.dx .rgrid:has(> :nth-child(4):last-child),.dx .rgrid:has(.rwork.brand){display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(44px,6vw,90px) clamp(18px,2.6vw,36px)}
+.dx .rwork{grid-column:1 / span 7}
+.dx .rwork:nth-child(even){grid-column:8 / span 5;margin-top:clamp(50px,11vw,190px)}
+.dx .rwork:nth-child(3){grid-column:2 / span 5}
+.dx .rwork:nth-child(4){grid-column:7 / span 6}
+.dx .rwork:only-child{grid-column:1 / -1}
+.dx .rwork:only-child .shot{aspect-ratio:21/10}
+.dx .rwork .shot{border-radius:6px}
+.dx .rwork .rw-meta b{font-size:clamp(20px,1.7vw,26px);font-weight:500;letter-spacing:-.02em}
+
+/* ---------- questions: open lines rather than boxes ---------- */
+.dx .faq{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:32px clamp(32px,6vw,96px);align-items:start}
+.dx .faq .head{position:sticky;top:110px;margin:0}
+.dx .qa{gap:0;border-bottom:1px solid var(--line)}
+.dx .qa details,.dx .qa details[open],.dx .qa details:hover{background:none;border:0;border-top:1px solid var(--line);border-radius:0}
+.dx .qa summary{padding:clamp(18px,2vw,26px) 0;font-size:clamp(17px,1.5vw,22px);letter-spacing:-.01em;transition:color 300ms}
+.dx .qa summary:hover{color:var(--crimson)}
+.dx .qa .ans p{padding:0 0 26px;font-size:15px;color:rgba(255,255,255,.72)}
+
+/* ---------- next service: a slanted red wipe ---------- */
+.dx .next{isolation:isolate}
+.dx .next::before{content:"";position:absolute;z-index:-1;inset:0 -12% 0 -12%;background:var(--crimson);transform:translateX(-101%) skewX(-16deg);transition:transform 800ms var(--ease)}
+.dx .next:hover::before,.dx .next:focus-visible::before{transform:translateX(0) skewX(-16deg)}
+.dx .next:hover .t{color:#fff}
+.dx .next:hover .lbl{color:#fff}
+.dx .next:hover .arrow{background:#fff;border-color:#fff;color:#000}
+@media (hover:none){ .dx .next::before{display:none} }
+
+/* ---------- smaller screens ---------- */
+@media (max-width:1100px){
+  .dx-bar{grid-template-columns:minmax(0,1fr) auto}
+  .dx-rail{grid-column:1 / -1;flex-direction:row;align-items:center;justify-content:space-between}
+}
+@media (max-width:900px){
+  .dx .statement{grid-template-columns:minmax(0,1fr)}
+  .dx .statement .label{padding:0}
+  .dx .faq{grid-template-columns:minmax(0,1fr)}
+  .dx .faq .head{position:static}
+}
+@media (max-width:700px){
+  .dx-hero{min-height:max(100svh,720px);justify-content:flex-end;gap:24px;padding-top:72px;padding-bottom:max(18px,env(safe-area-inset-bottom,0px))}
+  .dx-hero h1{font-size:min(calc((100vw - 2*var(--pad))/(var(--len)*.56)),25vw)}
+  .dx-hero h1 .o{-webkit-text-stroke-width:1px;letter-spacing:-.03em}
+  .dx-bar{grid-template-columns:minmax(0,1fr);gap:18px;padding-top:16px}
+  .dx-bar .lead{font-size:16px}
+  .dx-bar .xbtns{display:grid}
+  .dx-rail{grid-column:auto;gap:12px}
+  .dx-rail .lbl{flex:none}
+  .ticks{flex:1;justify-content:flex-end;gap:0}
+  .ticks a{width:clamp(16px,5vw,24px);height:34px}
+  .dx .rgrid,.dx .rgrid:has(> :nth-child(4):last-child),.dx .rgrid:has(.rwork.brand){grid-template-columns:minmax(0,1fr)}
+  .dx .rwork,.dx .rwork:nth-child(even),.dx .rwork:nth-child(3),.dx .rwork:nth-child(4),.dx .rwork:only-child{grid-column:1;margin-top:0}
+  .dx .rwork:nth-child(even){margin-left:12%}
+  .dx .rwork:only-child .shot{aspect-ratio:16/10}
+  .dx-item{grid-template-columns:34px minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  .dx-item h3,.dx-item .d,.dx-step::after,.dx-step .num,.dx .next::before{transition:none}
+}

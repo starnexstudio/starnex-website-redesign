@@ -33,10 +33,74 @@ addEventListener('scroll', onScroll, { passive: true }); onScroll();
 const st = document.querySelector('.statement p');
 if (st) st.innerHTML = st.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(' ');
 
+/* ---------- service pages: pinned list and sideways staircase ---------- */
+const DX = document.body.classList.contains('dx');
+let dxP = 0, dxPulse = 0; // how far through the list, read by the particle symbol
+if (DX) {
+  const stage = document.querySelector('.dx-stage'), items = [...stage.querySelectorAll('.dx-item')], count = stage.querySelector('.dx-count b');
+  const walk = document.querySelector('.dx-steps'), track = walk.querySelector('.dx-track'), walkSteps = [...walk.querySelectorAll('.dx-step')];
+  let current = -1, far = 0;
+  const pick = i => { if (i === current) return; current = i; items.forEach((el, k) => el.classList.toggle('on', k === i)); count.textContent = String(i + 1).padStart(2, '0'); dxPulse = 1; };
+  const update = () => {
+    const vh = innerHeight, r = stage.getBoundingClientRect();
+    if (stage.classList.contains('live')) { dxP = clamp(-r.top / Math.max(1, r.height - vh)); pick(Math.min(items.length - 1, Math.floor(dxP * items.length))); }
+    else dxP = clamp((vh * .75 - r.top) / Math.max(1, r.height));
+    if (walk.classList.contains('live')) {
+      const p = clamp(-walk.getBoundingClientRect().top / Math.max(1, walk.offsetHeight - vh)), n = walkSteps.length;
+      track.style.transform = `translate3d(${-far * p}px,0,0)`;
+      walkSteps.forEach((el, k) => { const s = clamp(p * n * 1.04 - k); el.style.setProperty('--sp', s); el.classList.toggle('on', s > 0); });
+    }
+  };
+  const setup = () => {
+    const room = !RM && innerHeight >= 620;
+    stage.classList.toggle('live', room && innerWidth >= 900);
+    walk.classList.toggle('live', room && innerWidth >= 1000);
+    if (walk.classList.contains('live')) { track.style.transform = ''; far = Math.max(0, track.scrollWidth - innerWidth); walk.style.height = `${far + innerHeight}px`; }
+    else { walk.style.height = ''; track.style.transform = ''; walkSteps.forEach(el => el.style.removeProperty('--sp')); }
+    update();
+  };
+  items.forEach((el, k) => el.addEventListener('click', () => {
+    if (!stage.classList.contains('live')) return;
+    const top = stage.getBoundingClientRect().top + scrollY, to = top + (k + .5) / items.length * (stage.offsetHeight - innerHeight);
+    lenis ? lenis.scrollTo(to, { duration: 1 }) : scrollTo(0, to);
+  }));
+  // the list without pinning: each row lights up as it crosses the middle of the screen
+  const io = new IntersectionObserver(es => es.forEach(e => { if (!stage.classList.contains('live')) e.target.classList.toggle('on', e.isIntersecting); }), { rootMargin: '-40% 0px -40% 0px' });
+  items.forEach(el => io.observe(el));
+  const stepIo = new IntersectionObserver(es => es.forEach(e => { if (!walk.classList.contains('live') && e.isIntersecting) e.target.classList.add('on'); }), { rootMargin: '-30% 0px -30% 0px' });
+  walkSteps.forEach(el => stepIo.observe(el));
+  addEventListener('scroll', update, { passive: true });
+  let lastW = innerWidth; addEventListener('resize', () => { if (innerWidth !== lastW || !matchMedia('(hover:none)').matches) { lastW = innerWidth; setup(); } });
+  setup();
+}
+
 /* ---------- scroll choreography ---------- */
 if (window.gsap && window.ScrollTrigger && !RM) {
   gsap.registerPlugin(ScrollTrigger);
   gsap.config({ nullTargetWarn: false }); // the same script runs on pages without every section
+  if (DX) {
+    const wide = innerWidth > 700;
+    // the title arrives from both sides, then parts as you scroll away
+    gsap.from('.dx-hero h1 .a', { xPercent: -8, opacity: 0, duration: 1.1, ease: 'power3.out' });
+    gsap.from('.dx-hero h1 .o', { xPercent: 8, opacity: 0, duration: 1.1, ease: 'power3.out' });
+    gsap.from('.dx-bar > *', { y: 16, opacity: 0, duration: .9, delay: .25, stagger: .08, ease: 'power3.out' });
+    const leave = { trigger: '.dx-hero', start: 'top top', end: 'bottom top', scrub: true };
+    gsap.to('.dx-hero h1 .a', { x: () => -innerWidth * (wide ? .14 : .06), ease: 'none', scrollTrigger: leave });
+    gsap.to('.dx-hero h1 .o', { x: () => innerWidth * (wide ? .14 : .06), ease: 'none', scrollTrigger: leave });
+    gsap.to('.dx-bar', { opacity: 0, ease: 'none', scrollTrigger: { trigger: '.dx-hero', start: '45% top', end: '85% top', scrub: true } });
+    // who it's for: the sentence lights up as it passes
+    gsap.fromTo('.dx-fit li', { opacity: .18 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: '.dx-fit ul', start: 'top 80%', end: 'bottom 55%', scrub: true } });
+    gsap.from('.dx-shead > *', { y: 30, opacity: 0, duration: 1, stagger: .08, ease: 'power3.out', scrollTrigger: { trigger: '.dx-steps', start: 'top 80%' } });
+    gsap.from('.dx-head > *', { y: 26, opacity: 0, duration: .9, stagger: .08, ease: 'power3.out', scrollTrigger: { trigger: '.dx-stage', start: 'top 75%' } });
+    // rows without pinning come in from alternating sides
+    if (!document.querySelector('.dx-stage.live')) gsap.utils.toArray('.dx-item').forEach((el, i) => gsap.from(el, { x: i % 2 ? 26 : -26, opacity: 0, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } }));
+    if (!document.querySelector('.dx-steps.live')) gsap.utils.toArray('.dx-step').forEach(el => gsap.from(el, { y: 30, opacity: 0, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } }));
+    // project pictures wipe open, the offset ones drifting a little against the scroll
+    gsap.utils.toArray('.dx .rwork').forEach((el, i) => {
+      gsap.fromTo(el.querySelector('.shot'), { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: 'power3.inOut', scrollTrigger: { trigger: el, start: 'top 85%' } });
+      if (wide && i % 2) gsap.fromTo(el, { y: 40 }, { y: -40, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
+  }
   gsap.from('#heroCopy > *', { y: 18, duration: .9, ease: 'power3.out', stagger: .07 });
   gsap.to('#heroCopy', { y: -60, opacity: 0, ease: 'none', scrollTrigger: { trigger: '.s-hero', start: '50% top', end: 'bottom top', scrub: true } });
   if (st) gsap.to('.statement .w', { opacity: 1, stagger: .08, ease: 'none', scrollTrigger: { trigger: '.statement', start: 'top 75%', end: 'bottom 60%', scrub: true } });
@@ -255,10 +319,22 @@ const mat = new THREE.PointsMaterial({ size: .05, map: new THREE.CanvasTexture(d
 const pts = new THREE.Points(geo, mat);
 const grp = new THREE.Group(); grp.add(pts); scene.add(grp);
 
+let spotA = null, spotB = null; // service pages: where the symbol sits in the opening, and beside the list
 function size() {
   const b = canvas.getBoundingClientRect(); r.setSize(b.width, b.height, false);
   cam.aspect = b.width / Math.max(1, b.height); cam.updateProjectionMatrix();
   const wH = 2 * cam.position.z * Math.tan(cam.fov * Math.PI / 360), wW = wH * cam.aspect;
+  if (DX) {
+    if (b.width >= 900) {
+      spotA = { x: 0, y: wH * .03, s: Math.min(wH * .4, wW * .24), dim: 1 };
+      spotB = { x: wW * .28, y: 0, s: Math.min(wH * .3, wW * .16), dim: 1 };
+    } else { // phones: above the title in the opening, a faint backdrop behind the list
+      const top = 72, bottom = document.querySelector('.dx-hero h1').getBoundingClientRect().top + scrollY;
+      spotA = { x: 0, y: (b.height / 2 - (top + bottom) / 2) / b.height * wH, s: Math.min(wW * .36, Math.max(.8, (bottom - top) / b.height * wH * .44)), dim: 1 };
+      spotB = { x: 0, y: 0, s: wW * .42, dim: .22 };
+    }
+    return;
+  }
   if (b.width >= 900) { // symbol on the right, copy on the left
     const s = Math.min(wH * .34, wW * .2); grp.scale.setScalar(s); grp.position.set(wW * .24, wH * .04, 0); mat.size = .05 * (s / 1.4);
   } else { // symbol centred in the space between the header and the copy
@@ -274,14 +350,42 @@ size(); addEventListener('resize', size);
 let mx = 0, my = 0, sx = 0, sy = 0, vis = true; const t0 = performance.now();
 addEventListener('pointermove', e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; }, { passive: true });
 new IntersectionObserver(es => { vis = es[0].isIntersecting; }).observe(canvas);
-const hero = document.querySelector('.s-hero');
+const hero = document.querySelector(DX ? '.dx-hero' : '.s-hero');
 const ease = t => 1 - Math.pow(1 - t, 3);
 let lastK = -1;
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const mix = (a, b, t) => a + (b - a) * t;
+const stageEl = DX && document.querySelector('.dx-stage');
+// service pages: red rises through the symbol as the visitor moves through the list
+let lastFill = -1;
+function fill(p) {
+  if (Math.abs(p - lastFill) < .004) return; lastFill = p;
+  const level = p * 1.1 - .05;
+  for (let i = 0; i < shape.length; i++) {
+    if (shape[i][2]) continue;
+    const on = (target[i * 3 + 1] + 1) / 2 + ((i * 7919) % 100) / 100 * .08 < level;
+    col[i * 3] = on ? red.r : 1; col[i * 3 + 1] = on ? red.g : 1; col[i * 3 + 2] = on ? red.b : 1;
+  }
+  geo.attributes.color.needsUpdate = true;
+}
 function loop(now) {
   requestAnimationFrame(loop); if (!vis) return;
   const intro = RM ? 1 : ease(clamp((now - t0) / 1300));
   const sp = RM ? 0 : clamp(scrollY / Math.max(1, hero.offsetHeight));
-  const k = intro * (1 - sp * .85);
+  let k = intro * (1 - sp * .85), fade = 1 - sp * .6;
+  if (DX) {
+    const y = scrollY, vh = innerHeight, box = stageEl.getBoundingClientRect(), top = box.top + y, end = box.bottom + y;
+    const gone = RM ? 0 : smooth(end - vh * 1.1, end - vh * .15, y), off = RM ? y > hero.offsetHeight : gone >= .999;
+    canvas.style.visibility = off ? 'hidden' : 'visible'; if (off) return;
+    const away = 1 - smooth(0, hero.offsetHeight * .75, y), back = RM ? 0 : smooth(top - vh * 1.1, top - vh * .1, y), whole = Math.max(away, back);
+    dxPulse *= .93; if (dxPulse < .01) dxPulse = 0;
+    k = RM ? 1 : intro * whole * (1 - gone * .9) * (1 - dxPulse * .12);
+    fade = (RM ? 1 - clamp(y / hero.offsetHeight) : Math.max(.3, whole) * (1 - gone)) * mix(1, spotB.dim, back);
+    const s = mix(spotA.s, spotB.s, back);
+    grp.scale.setScalar(s); grp.position.set(mix(spotA.x, spotB.x, back), mix(spotA.y, spotB.y, back), 0);
+    mat.size = .05 * (s / (innerWidth >= 900 ? 1.4 : 1.1));
+    if (!RM) fill(dxP * back);
+  }
   if (Math.abs(k - lastK) > .0005) {
     for (let i = 0; i < pos.length; i++) pos[i] = scatter[i] + (target[i] - scatter[i]) * k;
     geo.attributes.position.needsUpdate = true; lastK = k;
@@ -289,7 +393,7 @@ function loop(now) {
   sx += (mx - sx) * .045; sy += (my - sy) * .045;
   const idle = RM ? 0 : Math.sin(now * .0004) * .12;
   pts.rotation.y = idle + sx * .5 + (1 - intro) * 1.2; pts.rotation.x = sy * .25;
-  mat.opacity = .95 * (1 - sp * .6);
+  mat.opacity = .95 * fade;
   r.render(scene, cam);
 }
 requestAnimationFrame(loop);
