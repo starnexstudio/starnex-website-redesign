@@ -159,3 +159,7 @@
 .svc .go{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#fff;transition:gap 400ms var(--ease), color 300ms}
 .svc p .go{display:flex;width:max-content}
 .svc.flip h2{padding-right:.06em}
+
+/* phones: the text runs the full width; no hover, so scrolling carries the colour and the CSS fade must not lag behind it */
+@media (max-width:760px){.svc p{max-width:none}}
+@media (max-width:760px),(hover:none){.svc h2,.svc .go{transition:none}}

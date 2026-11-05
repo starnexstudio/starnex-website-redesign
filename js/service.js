@@ -44,6 +44,13 @@ if (window.gsap && window.ScrollTrigger && !RM) {
     gsap.from(el, { y: 40, opacity: 0, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 85%' } }));
   gsap.utils.toArray('.inc').forEach((el, i) =>
     gsap.from(el, { y: 40, opacity: 0, duration: .9, ease: 'power3.out', delay: (i % 3) * .08, scrollTrigger: { trigger: el, start: 'top 90%' } }));
+  if (innerWidth <= 760 || matchMedia('(hover:none)').matches) gsap.utils.toArray('.svc').forEach(el => {
+    const parts = el.querySelectorAll('h2,.go');
+    gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 25%', scrub: true } })
+      .fromTo(parts, { color: '#fff' }, { color: '#E0002B', ease: 'none' })
+      .to(parts, { color: '#fff', ease: 'none' });
+    gsap.fromTo(el.querySelector('h2'), { x: el.classList.contains('flip') ? 14 : 0 }, { x: el.classList.contains('flip') ? 0 : 14, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
+  });
   gsap.utils.toArray('.svc').forEach(el => gsap.from(el.children, { y: 30, opacity: 0, duration: 1, stagger: .12, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 85%' } }));
   gsap.utils.toArray('.prow').forEach(el => gsap.from(el, { y: 22, opacity: 0, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 94%' } }));
   gsap.from('.tag', { y: 20, opacity: 0, duration: .7, stagger: .05, ease: 'power3.out', scrollTrigger: { trigger: '.tags', start: 'top 85%' } });

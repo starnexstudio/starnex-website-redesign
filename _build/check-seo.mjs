@@ -9,7 +9,7 @@ const errors = [], warns = [];
 const err = (f, m) => errors.push(`${f}: ${m}`), warn = (f, m) => warns.push(`${f}: ${m}`);
 
 const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => {
-  if (e.name.startsWith('_') || e.name.startsWith('.') || e.name === 'node_modules') return [];
+  if (e.name.startsWith('_') || e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'dist') return [];
   const p = path.join(d, e.name);
   return e.isDirectory() ? walk(p) : [p];
 });

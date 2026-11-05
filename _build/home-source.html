@@ -391,9 +391,11 @@ if(window.gsap && window.ScrollTrigger && !RM){
   // service rows: titles slide in from their side, text follows
   document.querySelectorAll('.svc').forEach(row=>{
     const flip=row.classList.contains('flip');
-    gsap.from(row.querySelector('.sl'),{xPercent:innerWidth>760?(flip?18:-18):0,y:innerWidth>760?0:30,opacity:0,ease:'power3.out',duration:1.2,scrollTrigger:{trigger:row,start:'top 85%',toggleActions:'play none none reverse'}});
+    gsap.from(row.querySelector('.sl'),{xPercent:flip?18:-18,opacity:0,ease:'power3.out',duration:1.2,scrollTrigger:{trigger:row,start:'top 85%',toggleActions:'play none none reverse'}});
     gsap.from(row.querySelector('.sp'),{y:24,opacity:0,ease:'power3.out',duration:1,delay:.15,scrollTrigger:{trigger:row,start:'top 85%',toggleActions:'play none none reverse'}});
-    if(innerWidth>760) gsap.fromTo(row.querySelector('.sl'),{x:0},{x:flip?-40:40,ease:'none',scrollTrigger:{trigger:row,start:'top bottom',end:'bottom top',scrub:true}});
+    const small=innerWidth<=760;
+    gsap.fromTo(row.querySelector('.sl'),{x:small&&flip?14:0},{x:small?(flip?0:14):(flip?-40:40),ease:'none',scrollTrigger:{trigger:row,start:'top bottom',end:'bottom top',scrub:true}});
+    if(small||matchMedia('(hover:none)').matches) gsap.timeline({scrollTrigger:{trigger:row,start:'top 80%',end:'bottom 25%',scrub:true}}).fromTo(row.querySelectorAll('.sl,.go'),{color:'#fff'},{color:'#E0002B',ease:'none'}).to(row.querySelectorAll('.sl,.go'),{color:'#fff',ease:'none'});
   });
   // pinned headline scales gently; cards drift at different speeds
   gsap.fromTo('.process .big',{scale:.86,opacity:.35},{scale:1,opacity:1,ease:'none',scrollTrigger:{trigger:'.process',start:'top bottom',end:'top top',scrub:true}});
