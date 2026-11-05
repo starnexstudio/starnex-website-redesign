@@ -1,0 +1,60 @@
+/* Hero actions: no pills. Built from the slanted red shard in the StarNex mark.
+   .xbtn.primary  a crimson shard with an offset outline behind it, like a cut piece
+   .xbtn.ghost    a bare label with a small shard marker and a slanted underline */
+.xbtn{
+  --sk:-18deg; --off:7px;
+  position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;gap:12px;
+  height:58px;padding:0 34px;color:#fff;text-decoration:none;
+  font:600 12.5px/1 var(--sans, "Figtree", Arial, sans-serif);letter-spacing:.18em;text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent;cursor:pointer;
+  transition:scale 300ms cubic-bezier(.22,1,.36,1);
+}
+.xbtn:active{scale:.97}
+.xbtn .ic{display:inline-grid;place-items:center;width:16px;height:16px;transition:transform 600ms cubic-bezier(.22,1,.36,1)}
+.xbtn .ic svg{display:block}
+
+/* label that rolls up on hover */
+.xbtn .lb{display:inline-block;height:1.25em;line-height:1.25em;overflow:hidden}
+.xbtn .lb>span{display:block;transition:transform 600ms cubic-bezier(.22,1,.36,1)}
+.xbtn .lb>span::after{content:attr(data-t);display:block}
+.xbtn:hover .lb>span,.xbtn:focus-visible .lb>span{transform:translateY(-50%)}
+
+/* primary: crimson shard + offset outline */
+.xbtn.primary::before,.xbtn.primary::after{content:"";position:absolute;inset:0;transform:skewX(var(--sk));transition:transform 700ms cubic-bezier(.22,1,.36,1), background 400ms, border-color 400ms}
+.xbtn.primary::before{z-index:-1;background:#E0002B;box-shadow:0 14px 40px rgba(224,0,43,.35)}
+.xbtn.primary::after{z-index:-2;border:1px solid rgba(255,255,255,.45);transform:translate(var(--off),var(--off)) skewX(var(--sk))}
+.xbtn.primary:hover::before{background:#F00A36}
+.xbtn.primary:hover::after{transform:translate(0,0) skewX(var(--sk));border-color:rgba(255,255,255,0)}
+.xbtn.primary:hover .ic{transform:translate(3px,-3px)}
+
+/* ghost: shard marker + slanted underline that fills with crimson */
+.xbtn.ghost{padding:0 18px}
+.xbtn.ghost .sh{width:6px;height:16px;background:#E0002B;transform:skewX(var(--sk));transition:width 600ms cubic-bezier(.22,1,.36,1)}
+.xbtn.ghost::before,.xbtn.ghost::after{content:"";position:absolute;left:14px;right:14px;bottom:9px;height:1px;transform:skewX(var(--sk))}
+.xbtn.ghost::before{background:rgba(255,255,255,.3)}
+.xbtn.ghost::after{background:#E0002B;height:2px;bottom:8.5px;transform-origin:left;transform:scaleX(0);transition:transform 700ms cubic-bezier(.22,1,.36,1)}
+.xbtn.ghost:hover::after,.xbtn.ghost:focus-visible::after{transform:scaleX(1)}
+.xbtn.ghost:hover .sh{width:14px}
+.xbtn.ghost:hover .ic{transform:translateY(3px)}
+
+/* compact: header and footer */
+.xbtn.sm{--off:5px;height:40px;padding:0 22px;gap:10px;font-size:11.5px;letter-spacing:.16em}
+.xbtn.sm .ic{width:14px;height:14px}
+.xbtn.sm .ic svg{width:14px;height:14px}
+.xbtn.primary.sm::before{box-shadow:0 8px 24px rgba(224,0,43,.3)}
+.hdr .xbtn.sm{margin-right:var(--off)}
+.foot .brand .xbtn{margin-left:8px}
+/* a left-aligned ghost button lines its shard marker up with the text above */
+.case .xbtn.ghost{margin-left:-18px}
+
+.xbtns{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px}
+.hero .xbtns{justify-content:center}
+@media (max-width:700px){
+  .xbtns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;width:100%;padding:0 17px 0 10px}
+  .xbtns .xbtn{height:60px;padding:0 12px;letter-spacing:.12em;font-size:12px;white-space:nowrap}
+  .xbtns .xbtn.ghost{padding:0 8px}
+}
+@media (max-width:560px){ .hdr .xbtn{display:none} }
+@media (prefers-reduced-motion:reduce){
+  .xbtn,.xbtn *, .xbtn::before,.xbtn::after,.xbtn .lb>span{transition:none!important}
+}

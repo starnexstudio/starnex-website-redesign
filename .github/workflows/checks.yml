@@ -1,0 +1,28 @@
+# Runs on every push and pull request. It only checks; it never deploys.
+# The host builds the site itself; see README.md.
+name: Checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build strictly (a missing translation stops it)
+        working-directory: _build
+        run: node build.mjs
+      - name: Check translations
+        working-directory: _build
+        run: node check-i18n.mjs
+      - name: Check SEO and launch files
+        working-directory: _build
+        run: node check-seo.mjs
+      - name: Collect the public files
+        working-directory: _build
+        run: node publish.mjs

@@ -1,0 +1,60 @@
+/* ---------- service rows link to their pages ---------- */
+a.svc{color:inherit}
+.svc h2{transition:color 400ms var(--ease)}
+a.svc:hover h2{color:var(--crimson)}
+.svc .go{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#fff;transition:gap 400ms var(--ease), color 300ms}
+a.svc:hover .go{gap:14px;color:var(--crimson)}
+.svc p .go{display:flex;width:max-content}
+
+/* ---------- desktop hero: smaller buttons, and the line under them stays on one row ---------- */
+@media (min-width:701px){
+  .hero .xbtn{--off:5px;height:44px;padding:0 24px;gap:10px;font-size:11.5px;letter-spacing:.16em}
+  .hero .xbtn.ghost{padding:0 16px}
+  .hero .xbtn .ic,.hero .xbtn .ic svg{width:14px;height:14px}
+  .hero .meta{flex-wrap:nowrap;white-space:nowrap;width:max-content;max-width:calc(100vw - 32px)}
+}
+
+/* ---------- phones: hero like a portfolio intro (visual, centred text, two equal buttons, scroll cue) ---------- */
+.glow{overflow:hidden}
+@media (max-width:700px){
+  .hero .copy{gap:22px;width:100%}
+  .hero-text{font-size:17px;line-height:1.5;color:rgba(255,255,255,.92)}
+  .hero .meta{display:none}
+  .hero .explore{font-size:13px}
+}
+
+/* ---------- selected work ---------- */
+.work{padding-block:clamp(60px,8vw,120px)}
+.whead{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:clamp(32px,4vw,56px)}
+.whead h2{font-size:clamp(40px, calc(14px + 4.4vw), 84px);font-weight:500;letter-spacing:-.04em;line-height:1}
+.whead h2 .o{color:transparent;-webkit-text-stroke:1.5px #fff;font-weight:400}
+.wgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,3vw,40px)}
+.wcard{display:flex;flex-direction:column;gap:18px}
+.wcard .shot{position:relative;display:block;aspect-ratio:16/10;border-radius:16px;overflow:hidden;background:#111;border:1px solid var(--line)}
+.wcard .shot img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;transition:transform 900ms var(--ease)}
+.wcard:hover .shot img{transform:scale(1.04)}
+.wcard .wmeta{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.wcard .wmeta b{display:block;font-size:clamp(20px,1.8vw,26px);font-weight:500;letter-spacing:-.02em;transition:color 300ms}
+.wcard .wmeta span span{display:block;color:var(--mute);font-size:13px;margin-top:4px}
+.wcard .wgo{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.22);display:grid;place-items:center;transition:background 300ms, border-color 300ms, transform 500ms var(--ease)}
+.wcard:hover .wmeta b{color:var(--crimson)}
+.wcard:hover .wgo{background:var(--crimson);border-color:var(--crimson);transform:rotate(-45deg)}
+@media (max-width:760px){ .wgrid{grid-template-columns:minmax(0,1fr)} }
+
+/* ---------- call line under the closing CTA ---------- */
+.cta .call{position:relative;color:var(--mute);font-size:14px;margin-top:-6px}
+.cta .call a{color:#fff;border-bottom:1px solid rgba(224,0,43,.7);padding-bottom:2px;transition:color 300ms, border-color 300ms}
+.cta .call a:hover{color:var(--crimson);border-color:var(--crimson)}
+
+/* a branding project spans the whole row: the grid has two columns and five projects */
+.wcard.wide .shot img{object-position:center 40%}
+@media (min-width:761px){
+  .wcard.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:clamp(20px,3vw,40px)}
+  .wcard.wide .shot{flex:0 0 calc(50% - clamp(20px,3vw,40px) / 2)}
+  .wcard.wide .wmeta{flex:1;min-width:0}
+}
+
+/* the homepage shows the five main services, then a link to all of them */
+.services .svc:nth-last-child(2){border-bottom:1px solid var(--line)}
+.svc-all{display:flex;justify-content:center;padding-top:clamp(28px,4vw,48px)}
+.svc.flip h2{padding-right:.06em}
