@@ -1,28 +1,17 @@
 # StarNex Studio: launch notes
 
-This folder starts with an underscore, so GitHub Pages (Jekyll) does not publish it. The same applies to `_build`. Do not add a `.nojekyll` file: it would publish both folders.
+Setup and publishing are in `README.md`. The domain switch, backup and rollback are in `CUTOVER.md`.
 
 ## How the site works
 
 - Static HTML in three languages: Albanian at `/`, English at `/en/`, German at `/de/`. No server, database, forms, CMS or environment variables, so there is no `.env` file.
-- Edit the sources in `_build/`, then run `node build.mjs`. The built pages go to the repository root and are committed, because GitHub Pages serves them as they are.
+- Edit the sources in `_build/`, then run `node build.mjs`. The built pages are generated and not committed; the host builds them and serves `dist/`.
 - Checks, from `_build/`:
   - `node check-i18n.mjs` and `node check-seo.mjs` need nothing installed and also run on GitHub.
   - `node serve.mjs` starts the local preview at http://localhost:5178.
   - `node check-layout.mjs`, `node check-flows.mjs` and `node check-speed.mjs` need the preview running, plus Playwright and Chrome. They borrow Playwright from another local project; set `PLAYWRIGHT_FROM` to change the path.
 - Assets: `node make-assets.mjs` makes the icons and resized images, `node make-og.mjs` the sharing image.
 - To use a supplied favicon: `node make-assets.mjs path/to/icon.png`.
-
-## Hosting limits (GitHub Pages)
-
-| Topic | What applies |
-| --- | --- |
-| Redirects | No server redirects. `/en` to `/en/` is automatic. |
-| Security headers | Custom headers are not possible (CSP, HSTS settings, frame options). HTTPS works today; check "Enforce HTTPS" in repository Settings > Pages. |
-| Compression and cache | Gzip is automatic. The cache time is fixed at about 10 minutes. |
-| 404 page | Only the root `404.html` is served, so a missing `/de/...` page shows the Albanian 404, which links to the other languages. |
-
-Adding headers later would mean a proxy or another host, which means a DNS change. That is not part of this launch.
 
 ## URL inventory and redirect map
 
@@ -32,7 +21,7 @@ The live site is a one-page site. Only these URLs exist and are in its sitemap:
 | --- | --- | --- |
 | `https://starnexstudio.com/` | same | Kept, redesigned |
 | `https://starnexstudio.com/en/` | same | Kept, redesigned |
-| `https://starnexstudio.com/en` | `/en/` | 301, automatic on GitHub Pages |
+| `https://starnexstudio.com/en` | `/en/` | 301. Confirm on the hosted preview. |
 | `http://` and `www.` versions | `https://starnexstudio.com/` | 301, already live; do not change |
 | `/images/og-image.jpg` | same path, new image | Kept so old shares keep working |
 | `/site.webmanifest`, `/robots.txt`, `/sitemap.xml` | same paths | Kept, regenerated |
@@ -75,35 +64,11 @@ Observed publicly only; the account was not accessed and nothing was changed. Wh
 5. Hours, photos and service list: only what is true. The structured data leaves out hours and street address because the site does not state them as a place to visit.
 6. Ask real clients for reviews, individually, after finished work. No paid or swapped reviews.
 
-## GitHub steps (only when you decide to publish)
-
-Live repository: `starnexstudio/StarNex`, branch `main`. Confirm in Settings > Pages that the source is `main`, root. Pushing a branch other than `main` changes nothing on the live site.
-
-```bash
-git clone https://github.com/starnexstudio/StarNex.git starnex-live
-cd starnex-live
-git tag pre-redesign
-git push origin pre-redesign
-git switch -c redesign
-```
-
-Then delete everything in `starnex-live` except `.git`, copy in the contents of `starfinaldesign`, and:
-
-```bash
-git add -A
-git commit -m "Redesign: three-language site"
-git push -u origin redesign
-```
-
-Open a pull request and wait for the Checks run. The repository is public, so `_build` will be readable there, though not published on the site. The old `.claude`, `.vscode`, `tools` and `README.md` go away with this copy; `README.md` at the root would otherwise be published.
-
-There is no staging site: GitHub Pages serves one branch per repository. Review locally with `node serve.mjs`, or through a separate host if you want a shared preview.
-
 ## Launch checklist
 
-Before merging:
+Before the switch:
 
-- [ ] Fill in the starting prices in `_build/data.mjs` (`from`). Only Development has one, 299€ from the old site. The rest show "on request".
+- [ ] Confirm the starting prices in `_build/data.mjs` (`from`): Development 299€, Online stores 599€, Digital menus 99€. The rest show "on request".
 - [ ] Send a test message to contact@starnexstudio.com yourself and confirm it arrives.
 - [ ] Send yourself a WhatsApp message through the site button.
 - [ ] Decide on the dropped content: pricing, testimonials, Booking as its own service, Google Reviews, maintenance.
@@ -111,11 +76,7 @@ Before merging:
 - [ ] Check the Search Console Pages report for extra indexed URLs. Export Performance data as the "before" baseline.
 - [ ] Note the current GA4 numbers: consent will lower measured traffic.
 
-Launch:
-
-- [ ] Merge the pull request into `main`.
-- [ ] Do not touch DNS at GoDaddy. Nameservers, A and www CNAME records stay. MX, SPF, DKIM and DMARC stay, so email is not affected.
-- [ ] Settings > Pages: the custom domain still shows `starnexstudio.com` and "Enforce HTTPS" is on.
+Launch: follow `CUTOVER.md`.
 
 Within an hour:
 
@@ -131,18 +92,7 @@ Optional cleanup at GoDaddy, when you choose: the TXT record `google-site-verifi
 
 ## Rollback
 
-Triggers: the site or domain is down for more than 15 minutes, the contact buttons fail, HTTPS fails, pages appear blank or broken on phones, or email stops.
-
-There is no database, so rollback means restoring files:
-
-```bash
-git switch main
-git pull
-git revert -m 1 <merge-commit>
-git push origin main
-```
-
-Pages republishes within minutes. The tag `pre-redesign` keeps the old state; `git diff pre-redesign main` should come back empty afterwards, apart from intended changes. If mail or the domain is affected, the cause is not this release, because it changes no DNS: check GoDaddy and Settings > Pages.
+See `CUTOVER.md`.
 
 ## Measurement
 
