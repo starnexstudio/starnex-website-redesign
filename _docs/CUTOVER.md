@@ -1,6 +1,6 @@
 # Domain cutover plan
 
-Nothing here has been done. The domain switches only after the owner approves it.
+**Status:** the switch was done on 2026-11-05. The site is live from this repository. Keep the old repository for rollback until the new site has been verified over a few weeks.
 
 The new site stays on GitHub Pages, so the domain moves from one repository to another and **DNS does not change**.
 
